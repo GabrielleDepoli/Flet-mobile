@@ -268,7 +268,70 @@ Usando `Row` com vários `Container` dentro (cada um representando um produto co
 ```python
 
 
-# Fazer código com Professor
+import flet as ft
+
+def card_produto(nome, preco):
+    return ft.Container(
+        width=140,
+        height=140,
+        padding=12,
+        bgcolor="#fff3E0",
+        border_radius=12,
+        content=ft.Column(
+            # Alinhamento horizontal
+            alignment=ft.MainAxisAlignment.CENTER,
+            # Alinhamento vertical
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                ft.Icon(ft.Icons.SHOPPING_BAG, size=22, color="#E65100"),
+                ft.Text(nome, weight=ft.FontWeight.BOLD, color="#4E342E"),
+                ft.Text(f"R$ {preco:.2f}",  color="#6D4C41"),
+            ],
+        ),
+    )
+
+def main(page: ft.Page):
+    # Título que aparece na barra da janela/aba
+    page.title = "Prateleira"
+
+    # Cor de fundo da página
+    page.bgcolor = "#2E1A47"
+
+    # Define o tamanho da tela 
+    page.window.width = 320
+    page.window.height = 600
+
+    # Centalizar elementos
+    page.horizontal_alignment=ft.CrossAxisAlignment.CENTER
+
+    # Padding vertical de 60px (topo e base)
+    page.padding = ft.Padding(top=60, bottom=60, left=0, right=0)
+
+    # Tupla (nome, preço)
+    produtos = [
+        ("Caneta", 3.5),
+        ("Caderno", 12.9),
+        ("Mochila", 89.9),
+        ("Estojo", 24.9),
+        ("Régua", 5.0),
+        ("Borracha", 2.5),
+    ]
+
+    page.add (
+        ft.Row(
+            # Permite rolar horizontalmente
+            scroll=ft.ScrollMode.AUTO, # Sim. em: Notebook
+            # scroll=ft.ScrollMode.HIDDEN, # Sim. em: Ceular real
+
+            # Centraliza os cartões em linha 
+            alignment=ft.MainAxisAlignment.CENTER,
+            # Laço para gerar os cards
+            controls=[card_produto(nome,preco) for nome, preco in produtos]
+        )
+    )
+
+
+ft.run(main)
 
 
 
@@ -293,7 +356,75 @@ Todo controle interativo tem um `on_<evento>` — o mais comuns são `on_click` 
 ```python
 
 
-# Fazer código com Professor
+import flet as ft
+
+def main(page: ft.Page):
+    # Título que aparece na barra da janela/aba
+    page.title = "Formulário Simples"
+
+    # Cor de fundo da página inteira: azul marinho escuro
+    page.bgcolor = "#EAF4F4",
+
+    # Padding vertical de 60px (topo e base)
+    page.padding = ft.Padding(top=60, bottom=60, left=0, right=0)
+
+    # Campo de texto para o nome
+    nome = ft.TextField(
+        label="Seu nome",
+        width=280, # Largura do campo
+        color="#2D3142", # Cor do texto
+        # Cor de label ("Gabrielle")
+        label_style=ft.TextStyle(color="#6B7B8C"),
+        border_color="#A9C5C6", # Cor da borda
+        # Cor quando campo em foco (Clicado ou ativado) 
+        focused_border_color="#5FA8A0",
+    )
+
+    # CheckBox de aceite dos termos
+    aceite = ft.Checkbox(
+        label="Aceito os termos",
+        check_color="#FFFFFF", 
+        active_color="#5FA8A0", 
+        # Cor do label ("Aceito os termos")
+        label_style=ft.TextStyle(color="#2D3142")
+    )
+
+    # Texto de resultado (Após enviar)
+    resultado = ft.Text(color="#3E7C7C")
+
+    def enviar(e):
+        # Função de envio dos dados com validações
+        if not nome.value:
+            nome.error_text = "Preencha seu nome"
+            page.update()
+            return
+        nome.error_text = None
+        resultado.value = f"Obrigado, {nome.value}!" if aceite.value else "Você precisa aceitar os termos."
+        page.update()
+
+    # Construção dos elementos
+    page.add(
+        ft.Column(
+            horizontal_alignment=ft.CrossAxisAlignment.CENTER,
+            controls=[
+                nome, # Campo nome
+                ft.Row(
+                    alignment=ft.MainAxisAlignment.CENTER,
+                    controls=[aceite], # CheckBox (Ciaxa para marcaros termos)
+                ),
+                # Botão "Enviar"
+                ft.ElevatedButton(
+                    "Enviar",
+                    on_click=enviar, # Ao clicar chama a função enviar
+                    bgcolor="#5FA8A0",
+                    color="#FFFFFF",
+                ),
+                resultado,
+            ],
+        )
+    )
+
+ft.run(main)
 
 
 
@@ -366,10 +497,10 @@ def main(page: ft.Page):
     resumo = ft.Text(color="#B388EB")
 
     def cadastrar(e):
-        resumo.value = (
-            f"{nome.value} ({email.value}) — {estado.value or 'sem estado'} — "
-            f"novidades: {'sim' if novidades.value else 'não'}"
-        )
+        linha1= f"{nome.value} ({email.value})"
+        linha2= f"{estado.value or 'sem estado'}"
+        linha3= f"novidades: {'sim' if novidades.value else 'não'}"
+        resumo.value = f"{linha1}\n{linha2}\n{linha3}"
         page.update()
 
     # Column explícita centralizando todos os controles, inclusive o checkbox
