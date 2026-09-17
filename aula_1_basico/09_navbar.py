@@ -15,10 +15,13 @@ def main(page: ft.Page):
 
     def confirmar_saida(e):
         def sim(e):
-            page.pop_dialog()
-            page.show_dialog(ft.SnackBar(ft.Text("Você saiu.")))
+            dialogo.open = False
+            page.snack_bar = ft.SnackBar(ft.Text("Você saiu."))
+            page.snack_bar.open = True
+            page.update()
         def nao(e):
-            page.pop_dialog()
+            dialogo.open = False
+            page.update()
 
         dialogo = ft.AlertDialog(
             modal=True,
@@ -26,7 +29,9 @@ def main(page: ft.Page):
             content=ft.Text("Deseja realmente sair?"),
             actions=[ft.TextButton("Não", on_click=nao), ft.TextButton("Sim", on_click=sim)],
         )
-        page.show_dialog(dialogo)
+        page.dialog = dialogo
+        dialogo.open = True
+        page.update()
 
     # Botão que abre o diálogo de confirmação, com cor de destaque em rosa
     page.add(
@@ -35,4 +40,4 @@ def main(page: ft.Page):
         )
     )
 
-ft.run(main)
+ft.app(main)

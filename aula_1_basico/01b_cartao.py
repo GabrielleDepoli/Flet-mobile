@@ -8,7 +8,7 @@ def main(page: ft.Page):
     page.window.height = 600
 
     # Cor de fundo
-    page.bgcolor = "#2B1B3D"
+    page.bgcolor = "#2B1B3D"  
 
     # Centalizar elementos
     page.horizontal_alignment = ft.CrossAxisAlignment.CENTER

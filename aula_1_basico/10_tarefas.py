@@ -28,7 +28,7 @@ def main(page: ft.Page):
     def build_task_row(t: dict) -> ft.Container:
         # Função "builder": recebe a tarefa e devolve a linha pronta (evita closure tardio)
         def ir_para_detalhe(e):
-            page.navigate(f"/tarefa/{t['id']}")
+            page.go(f"/tarefa/{t['id']}")
 
         def alternar_concluida(e):
             t["done"] = e.control.value
@@ -69,7 +69,7 @@ def main(page: ft.Page):
             padding=ft.Padding(top=60, bottom=60, left=0, right=0),  # padding vertical de 60px
             controls=[lista_view],
             floating_action_button=ft.FloatingActionButton(
-                icon=ft.Icons.ADD, on_click=lambda e: page.navigate("/nova"), bgcolor=BG_DESTAQUE
+                icon=ft.Icons.ADD, on_click=lambda e: page.go("/nova"), bgcolor=BG_DESTAQUE
             ),
         )
 
@@ -127,8 +127,10 @@ def main(page: ft.Page):
                 }
             )
             next_id[0] += 1
-            page.navigate("/")
-            page.show_dialog(ft.SnackBar(ft.Text("Tarefa criada com sucesso!")))
+            page.go("/")
+            page.snack_bar = ft.SnackBar(ft.Text("Tarefa criada com sucesso!"))
+            page.snack_bar.open = True
+            page.update()
 
         return ft.View(
             route="/nova",
@@ -163,12 +165,15 @@ def main(page: ft.Page):
 
         def excluir_confirmado(e):
             tasks.remove(tarefa)
-            page.pop_dialog()
-            page.navigate("/")
-            page.show_dialog(ft.SnackBar(ft.Text("Tarefa excluída.")))
+            dialogo.open = False
+            page.go("/")
+            page.snack_bar = ft.SnackBar(ft.Text("Tarefa excluída."))
+            page.snack_bar.open = True
+            page.update()
 
         def cancelar(e):
-            page.pop_dialog()
+            dialogo.open = False
+            page.update()
 
         dialogo = ft.AlertDialog(
             title=ft.Text("Excluir tarefa?"),
@@ -178,6 +183,11 @@ def main(page: ft.Page):
                 ft.TextButton("Excluir", on_click=excluir_confirmado),
             ],
         )
+
+        def abrir_dialogo_exclusao(e):
+            page.dialog = dialogo
+            dialogo.open = True
+            page.update()
 
         return ft.View(
             route=f"/tarefa/{task_id}",
@@ -202,7 +212,7 @@ def main(page: ft.Page):
                 ft.ElevatedButton(
                     "Excluir",
                     icon=ft.Icons.DELETE,
-                    on_click=lambda e: page.show_dialog(dialogo),
+                    on_click=abrir_dialogo_exclusao,
                     bgcolor="#FF6B6B",
                     color="#1B2E3D",
                 ),
@@ -226,11 +236,11 @@ def main(page: ft.Page):
 
     def view_pop(e):
         page.views.pop()
-        page.navigate(page.views[-1].route)
+        page.go(page.views[-1].route)
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     route_change(None)  # constrói a(s) view(s) da rota inicial
 
 
-ft.run(main)
+ft.app(main)

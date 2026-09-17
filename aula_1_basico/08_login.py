@@ -17,7 +17,7 @@ def main(page: ft.Page):
     def view_login():
         def entrar(e):
             if campo_nome.value:
-                page.navigate(f"/boas-vindas/{campo_nome.value}")
+                page.go(f"/boas-vindas/{campo_nome.value}")
         return ft.View(
             route="/",
             appbar=ft.AppBar(title=ft.Text("Login")),
@@ -43,7 +43,7 @@ def main(page: ft.Page):
                 ft.Text(f"Bem-vindo(a), {nome}!", size=22, color="#5FE0C0"),
                 ft.ElevatedButton(
                     "Sair",
-                    on_click=lambda e: page.navigate("/"),
+                    on_click=lambda e: page.go("/"),
                     bgcolor="#5FE0C0",
                     color="#142E2A",
                 ),
@@ -60,10 +60,10 @@ def main(page: ft.Page):
 
     def view_pop(e):
         page.views.pop()
-        page.navigate(page.views[-1].route)
+        page.go(page.views[-1].route)
 
     page.on_route_change = route_change
     page.on_view_pop = view_pop
     route_change(None)
 
-ft.run(main)
+ft.app(main)
