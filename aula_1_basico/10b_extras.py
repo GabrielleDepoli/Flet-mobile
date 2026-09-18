@@ -1,4 +1,3 @@
-
 import flet as ft
 
 # Cores de prioridade
