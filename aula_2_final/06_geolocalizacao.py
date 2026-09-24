@@ -16,10 +16,14 @@ def main(page: ft.Page):
     # Padding de 60px no topo (fora da área do notch/status bar em celular real) e na base
     page.padding = ft.Padding(top=60, bottom=60, left=0, right=0)
 
+    # Flet 1.0: Geolocator (assim como FilePicker, Audio, etc.) é um
+    # "serviço" que se registra sozinho ao ser criado — não é mais preciso
+    # adicioná-lo a page.services/page.overlay. Basta manter a referência
+    # "geo" viva (ela é capturada pela função obter_local abaixo).
     geo = fg.Geolocator()
-    page.services.append(geo)  # controles não-visuais (serviços) vão em page.services
 
-    botao = ft.ElevatedButton("Obter meu endereço", bgcolor="#4C8BF5", color="#0B1622")
+    # Flet 1.0: ft.ElevatedButton virou apenas ft.Button.
+    botao = ft.Button("Obter meu endereço", bgcolor="#4C8BF5", color="#0B1622")
 
     # Cartão de resultado: começa invisível e só aparece depois que o endereço chega
     cartao_endereco = ft.Container(visible=False)
